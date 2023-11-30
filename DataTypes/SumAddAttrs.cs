@@ -10,6 +10,8 @@ namespace GFDataApi.DataTypes
         {
             Attributes.Clear();
 
+            if (string.IsNullOrEmpty(value)) return;
+
             var ids = value.Split(';');
 
             foreach (var id in ids)

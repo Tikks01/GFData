@@ -1,5 +1,5 @@
-﻿using GFDataApi.Enums;
-using GFDataApi.Utils;
+﻿using GFDataApi.Config;
+using GFDataApi.Enums;
 
 namespace GFDataApi.BaseClasses
 {
@@ -28,7 +28,7 @@ namespace GFDataApi.BaseClasses
         {
             return await Task.Run(() =>
             {
-                string pathTranslate = Config.Instance().PathTranslate;
+                string pathTranslate = GFConfiguration.Instance.Data.PathToTranslate;
 
                 if (!Path.Exists(pathTranslate))
                 {

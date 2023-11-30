@@ -10,6 +10,7 @@ namespace GFDataApi.Querys.Classes
 
         public CEquipSetQuery() {
             Translations = new TEquipSet();
+            FileName = "EquipSet";
         }
         public override async Task<bool> Init()
         {

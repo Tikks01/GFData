@@ -1,10 +1,9 @@
 ﻿using GFDataApi.BaseClasses;
+using GFDataApi.Config;
 using GFDataApi.Enums;
 using GFDataApi.Querys.Records;
 using GFDataApi.Translate;
 using GFDataApi.Utils;
-using GFIniFileEditor.Utils;
-using System.IO;
 using System.Text;
 
 namespace GFDataApi.Querys.Classes
@@ -16,8 +15,8 @@ namespace GFDataApi.Querys.Classes
         }
 
         public override async Task<bool> Init()
-        {
-            FileName = "S_Spell";
+        {            
+            FileName = "Spell";
             await Task.WhenAll(
                 Load()
               , LoadTranslations()
@@ -49,7 +48,7 @@ namespace GFDataApi.Querys.Classes
                 data.Target = IniLine.Next<ESpellTarget>();
                 data.RestrictEquip = IniLine.Next<int>();
                 data.RestrictLevel = IniLine.Next<int>();
-                data.RestrictClass.LoadFromHexString(IniLine.Next<string>());
+                data.RestrictClass.LoadFromHexString(IniLine.Next<string>()!);
                 data.RestrictRebirthCount = IniLine.Next<int>();
                 data.RestrictRebirthScore = IniLine.Next<int>();                
                 data.RestrictForm = IniLine.Next<EFormType>();
@@ -198,5 +197,12 @@ namespace GFDataApi.Querys.Classes
                 return line.GetString();
             });
         }                
+
+        public override async Task<bool> Save()
+        {
+            string pathDb = GFConfiguration.Instance.Data.PathToDatabase;            
+            return await SaveToFile(pathDb);
+        }
+
     }
 }

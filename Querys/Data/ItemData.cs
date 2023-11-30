@@ -1,10 +1,11 @@
 ﻿using GFDataApi.DataTypes;
 using GFDataApi.Enums;
-using System.Net;
+using GFDataApi.JsonConverters;
+using System.Text.Json.Serialization;
 
 namespace GFDataApi.Querys.Data
 {
-    public record class ItemData
+    public record ItemData
     {
         public uint Id { get; set; }
         public string? IconFilename { get; set; }
@@ -16,8 +17,8 @@ namespace GFDataApi.Querys.Data
         public string? UsedSoundName { get; set; }
         public string? EnchanceEffectId { get; set; }
         public string? Name { get; set; }
-        public EItemType ItemType { get; set; }
         public EEquipType EquipType { get; set; }
+        public EItemType ItemType { get; set; }        
         public uint OpFlags { get; set; }
         public uint OpFlagsPlus { get; set; }
         public EItemTarget Target { get; set; }
@@ -29,6 +30,7 @@ namespace GFDataApi.Querys.Data
         public short RebirthMaxScore { get; set; }
         public uint RestrictAlign { get; set; }
         public uint RestrictPrestige { get; set; }
+        [JsonConverter(typeof(RestrictClassJsonConverter))]
         public RestrictClass RestrictClass { get; set; }
         public EItemQuality ItemQuality { get; set; }
         public ushort ItemGroup { get; set; }
@@ -70,6 +72,7 @@ namespace GFDataApi.Querys.Data
         public uint SpecialDamage { get; set; }
         public sbyte DropRate { get; set; }
         public uint DropIndex { get; set; }
+        [JsonConverter(typeof(TreasureBuffsJsonConverter))]
         public TreasureBuffs TreasureBuffs { get; set; }
         public EBuffIconType EnchantType { get; set; }
         public int EnchantId { get; set; }
@@ -95,16 +98,12 @@ namespace GFDataApi.Querys.Data
         public EAuctionType AuctionType { get; set; }
         public int[] ExtraData { get; set; }
         public string? Tip { get; set; }
-
-
         public bool ItemMall { get; set; }
         public bool HealthTime {  get; set; }
         public sbyte ItemMallAddRate { get; set; }
         public bool ItemFlameProof { get; set; }
         public short SafeStregthen { get; set; }
         public short StrengthenType { get; set; }
-
-
         public ItemData()
         {
             RestrictClass = new RestrictClass();

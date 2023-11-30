@@ -1,4 +1,5 @@
 ﻿using GFDataApi.BaseClasses;
+using GFDataApi.Config;
 using GFDataApi.DataTypes;
 using GFDataApi.Enums;
 using GFDataApi.Querys.Data;
@@ -12,6 +13,8 @@ namespace GFDataApi.Querys.Classes
         public CEnchantQuery() : base()
         {            
             Translations = new TEnchant();
+
+            FileName = "Enchant";
         }        
 
         protected override async Task<EnchantData> Deserialize(IniLine IniLine)

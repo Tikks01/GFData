@@ -1,7 +1,7 @@
-﻿using GFDataApi.Utils;
+﻿using GFDataApi.Config;
+using GFDataApi.Enums;
+using GFDataApi.Utils;
 using GFIniFileEditor.Utils;
-using System.Numerics;
-using System.Reflection;
 using System.Text;
 
 namespace GFDataApi.BaseClasses
@@ -11,7 +11,7 @@ namespace GFDataApi.BaseClasses
         where IdType : notnull
     {
         protected CIniFile _File { get; set; }
-        protected String FileName = "";
+        protected string FileName { get; set; } = "";
         public Dictionary<IdType,Query> QueryItems { get; protected set; }
         public TranslationLanguages<IdType>? Translations { get; protected set; }
 
@@ -23,8 +23,9 @@ namespace GFDataApi.BaseClasses
 
         protected async virtual Task Load()
         {
-            string path = Config.Instance().DataFolder;
-            string fullPath = Path.Combine(path, FileName);
+            string path = GFConfiguration.Instance.Data.PathToDatabase;
+            string CompleteFileName = GFConfiguration.Instance.Data.DefaultLoadPrefix + FileName + ".ini";
+            string fullPath = Path.Combine(path, CompleteFileName);            
             if (_File == null) return;
 
             _File.Load(fullPath);
@@ -37,15 +38,22 @@ namespace GFDataApi.BaseClasses
                 
                 if (id == null) continue;
 
-                QueryItems.Add(id , Item);
-            }
+                try
+                {
+                    QueryItems.Add(id, Item);
+                }
+                catch (Exception)
+                {
 
-            //await LoadTranslations(); independente do Load(), removido daqui para chamar as duas tasks em paralelo
+                    throw;
+                }
+                
+            }            
         }
 
         protected abstract IdType GetId(Query QueryItem);        
 
-        public async virtual Task<bool> SaveToFile(string path)
+        protected async virtual Task<bool> SaveToFile(string path, IniFileType type = IniFileType.Client)
         {
             List<string> fileLines = new List<string> {
                 $"|{_File.Version}|{_File.Columns}|"
@@ -64,12 +72,17 @@ namespace GFDataApi.BaseClasses
                 fileLines.AddRange(iniStrings);
             #endif
 
+            string Prefix = type switch
+            {
+                IniFileType.Client => "C_",
+                IniFileType.Server => "S_",
+                _ => "C_",
+            };
 
-
+            string CompleteFileName = Prefix + FileName + ".ini";
 
             Encoding big5 = Encoding.GetEncoding("Big5");
-            await System.IO.File.WriteAllLinesAsync(path, fileLines, big5);
-
+            await File.WriteAllLinesAsync(Path.Combine( path, FileName), fileLines, big5);
             return true;
         }        
         protected async Task<bool> LoadTranslations()
@@ -78,6 +91,32 @@ namespace GFDataApi.BaseClasses
         }
         public abstract Task<bool> Init();
         protected abstract Task<Query> Deserialize(IniLine IniLine);
-        protected abstract Task<string> Serialize(Query QueryItemObject);
+        protected abstract Task<string> Serialize(Query QueryItemObject);        
+        public virtual async Task<bool> Save()
+        {
+            var config = GFConfiguration.Instance.Data;
+
+            string Path = config.PathToDatabase;
+
+            await SaveToFile(Path, IniFileType.Client);            
+
+            if (config.OutPutClientFiles.Count > 0)
+            {
+                foreach (string s in  config.OutPutClientFiles)
+                {
+                    await SaveToFile(s, IniFileType.Client);
+                }
+            }            
+
+            if (config.OutPutServerFiles.Count > 0)
+            {
+                foreach (string s in config.OutPutServerFiles)
+                {
+                    await SaveToFile(s, IniFileType.Server);
+                }
+            }
+
+            return true;
+        }           
     }
 }

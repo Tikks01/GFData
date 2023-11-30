@@ -1,10 +1,11 @@
 ﻿using GFDataApi.DataTypes;
 using GFDataApi.Enums;
-using GFDataApi.Querys.Classes;
+using GFDataApi.JsonConverters;
+using System.Text.Json.Serialization;
 
 namespace GFDataApi.Querys.Records
 {
-    public record class SpellData : IComparable<SpellData>
+    public record SpellData : IComparable<SpellData>
     {
         public int Id { get; set; }
         public string? IconFileName { get; set; }
@@ -24,9 +25,8 @@ namespace GFDataApi.Querys.Records
         public ESpellTarget Target { get; set; }
         public int RestrictEquip { get; set; }
         public int RestrictLevel { get; set; }
-        public RestrictClass RestrictClass { get; set; }
-        //public string? RestrictClass { get; set; } //ERestrictClass RestrictClass { get; set; } provisorio, algumas vezes o valor é convertido para hexadecimal, algumas vezes não.
-                                                  //esta como string para manter os valores originais ate decifrar a logica por tras da conversão em hexa
+        [JsonConverter(typeof(RestrictClassJsonConverter))]
+        public RestrictClass RestrictClass { get; set; }        
         public int RestrictRebirthCount { get; set; }
         public int RestrictRebirthScore { get; set; }
         public EFormType RestrictForm { get; set; }

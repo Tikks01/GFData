@@ -2,7 +2,7 @@
 
 namespace GFDataApi.Querys.Data
 {
-    public record class EquipSetData
+    public record EquipSetData
     {
         public uint Id { get; set; }
         public string? Name { get; set; }

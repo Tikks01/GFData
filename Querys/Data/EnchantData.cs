@@ -1,10 +1,12 @@
 ﻿using GFDataApi.DataTypes;
 using GFDataApi.Enums;
+using GFDataApi.JsonConverters;
 using GFDataApi.Querys.Records;
+using System.Text.Json.Serialization;
 
 namespace GFDataApi.Querys.Data
 {
-    public record class EnchantData : IComparable<SpellData>
+    public record EnchantData : IComparable<SpellData>
     {
         public int Id { get; set; }
         public string? IconFileName { get; set; }
@@ -16,6 +18,7 @@ namespace GFDataApi.Querys.Data
         public EEnchantFlag EnchantFlag { get; set; }
         public EEnchantCategory EnchantCategory { get; set; }
         public ushort ImuneMonsterType { get; set; }
+        [JsonConverter(typeof(EnchantCommandsJsonConverter))]
         public EnchantCommands EnchantCommands { get; set; }        
         public int Period { get; set; }
         public ushort HiWord { get; set; }
@@ -33,8 +36,7 @@ namespace GFDataApi.Querys.Data
         public string? TransitionEffectId { get; set; }
         public string? TransitionEffectNode { get; set; }
         public string? TransitionEffectDuration { get; set; }
-        public string? TransitionDurationNode { get; set; }
-        //public int TransitionDurationTime { get; set; }
+        public string? TransitionDurationNode { get; set; }        
         public int TransitionCooldownTime { get; set; }
         public uint WeaponFlag { get; set; }
         public ushort TransitionEnchantHiWord { get; set; }

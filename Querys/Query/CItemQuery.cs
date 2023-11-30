@@ -1,4 +1,5 @@
 ﻿using GFDataApi.BaseClasses;
+using GFDataApi.Config;
 using GFDataApi.Enums;
 using GFDataApi.Querys.Data;
 using GFDataApi.Translate;
@@ -11,6 +12,7 @@ namespace GFDataApi.Querys.Classes
     {        
         public CItemQuery() : base() {             
             Translations = new TItem();
+            FileName = "Item";
         }
 
         private bool isItemMall = false;
@@ -130,7 +132,6 @@ namespace GFDataApi.Querys.Classes
                 return data;
             });
         }
-
         protected override async Task<string> Serialize(ItemData QueryItemObject)
         {
             return await Task.Run(() =>
@@ -239,23 +240,22 @@ namespace GFDataApi.Querys.Classes
                 return line.GetString();
             });
         }
-
         public async override Task<bool> Init()
         {
-            FileName = "C_Item.ini";            
+            FileName = "Item";
             await base.Load();
 
             isItemMall = true;
 
-            FileName = "C_ItemMall.ini";            
+            FileName = "ItemMall";
             await base.Load();
 
             await LoadTranslations();
             return true;
         }
-
-        public async override Task<bool> SaveToFile(string path)
+        protected async override Task<bool> SaveToFile(string path, IniFileType type = IniFileType.Client)
         {
+            var Config = GFConfiguration.Instance.Data;
             SortedDictionary<uint, ItemData> dItem = new SortedDictionary<uint, ItemData> ();
             SortedDictionary<uint, ItemData> dItemMall = new SortedDictionary<uint, ItemData>();
 
@@ -268,7 +268,7 @@ namespace GFDataApi.Querys.Classes
 
             foreach (var item in QueryItems)
             {
-                if (((ItemData)item.Value).ItemMall)
+                if (item.Value.ItemMall)
                     dItemMall.Add(item.Key, item.Value);
                 else
                     dItem.Add(item.Key, item.Value);                
@@ -286,14 +286,68 @@ namespace GFDataApi.Querys.Classes
 
             Encoding big5 = Encoding.GetEncoding("Big5");
 
-            await System.IO.File.WriteAllLinesAsync(Path.Combine( path, "C_Item2.ini"), fItem, big5);
-            await System.IO.File.WriteAllLinesAsync(Path.Combine(path, "C_ItemMall2.ini"), fItemMall, big5);
+            var _Prefix = type switch
+            {
+                IniFileType.Client => "C_",
+                IniFileType.Server => "S_",
+                _ => "C_"
+            };
+
+            var CompletePath = _Prefix + "Item.ini";
+
+            await File.WriteAllLinesAsync(Path.Combine( path, CompletePath), fItem, big5);
+
+            CompletePath = _Prefix + "ItemMall.ini";
+            await File.WriteAllLinesAsync(Path.Combine(path, CompletePath), fItemMall, big5);            
+
             return true;
         }
-
         protected override uint GetId(ItemData QueryItem)
         {
             return QueryItem.Id;
         }
+        /*public ItemData Add(bool isItemMall)
+        {
+            ItemData data = new()
+            {
+                ItemMall = isItemMall
+            };
+
+            uint smallestNumber = FirstAvaliableKey(isItemMall);
+
+            data.Id = smallestNumber;
+
+            this.QueryItems.Add(data.Id, data);
+            return data;
+        }
+        private uint FirstAvaliableKey(bool isItemMall)
+        {
+            if (!isItemMall)
+            {
+                for (uint i = 1; i < 40000u; i++)
+                {
+                    if (!this.QueryItems.ContainsKey(i))
+                    {
+                        return i;
+                    }
+                }
+            } else
+            {
+                for (uint i = 40001; i < this.QueryItems.Count; i++)
+                {
+                    if (!this.QueryItems.ContainsKey(i))
+                    {
+                        return i;
+                    }
+                }
+
+                return (uint)this.QueryItems.Count + 1;
+            }
+
+            throw new Exception("Invalid Range");
+
+            return 0u;
+
+        }*/
     }
 }

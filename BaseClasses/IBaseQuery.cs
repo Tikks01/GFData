@@ -7,7 +7,7 @@ namespace GFDataApi.BaseClasses
         where Query : new()
     {
         Task<bool> Init();
-        Task<bool> SaveToFile(string path);
-        public Dictionary<IdType, Query> QueryItems { get; }
+        Task<bool> Save();        
+        public Dictionary<IdType, Query> QueryItems { get; }        
     }
 }
