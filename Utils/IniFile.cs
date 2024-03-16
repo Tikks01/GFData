@@ -32,7 +32,7 @@ namespace GFIniFileEditor.Utils
             LoadContent();
 
             return true;
-        }     
+        }                   
         
         public bool LoadTranslation(string filePath, int Columns, Encoding encoding)
         {

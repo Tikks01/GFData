@@ -1,5 +1,4 @@
-﻿using GFDataApi.Enums;
-using GFDataApi.Utils;
+﻿using GFDataApi.Utils;
 using System.Collections;
 using System.Numerics;
 
@@ -9,6 +8,17 @@ namespace GFDataApi.DataTypes
     {
         private BitArray _BitArray = new BitArray(128);
         public RestrictClass() { }
+
+        public RestrictClass(string HexString)
+        {
+            LoadFromHexString(HexString);
+        }
+
+        public RestrictClass(long longValue)
+        {
+            LoadFromLong(longValue);
+        }
+
         public void LoadFromHexString( string hexString )
         {
             if ( string.IsNullOrEmpty( hexString ) )

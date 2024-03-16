@@ -1,26 +1,27 @@
-﻿using GFDataApi.BaseClasses;
-using GFDataApi.Querys.Classes;
-using GFDataApi.Querys.Data;
-using GFDataApi.Querys.Records;
-using System.Text;
+﻿using GFDataApi.DataContext.Implementations.PGSQL;
+using GFDataApi.DataContext.Interfaces;
+using GFDataApi.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GFDataApi
 {
     public class GameMannager
     {
-        public IBaseQuery<uint, ItemData> ItemQuery { get; private set; }
-        public IBaseQuery<int, SpellData> SpellQuery { get; private set; }
-        public IBaseQuery<int, EnchantData> EnchantQuery {  get; private set; }
-        public IBaseQuery<uint, EquipSetData> EquipSetQuery { get; private set; }
+        //public IBaseQuery<uint, ItemData> ItemQuery { get; private set; }
+        //public IBaseQuery<int, SpellData> SpellQuery { get; private set; }
+        //public IBaseQuery<int, EnchantData> EnchantQuery {  get; private set; }
+        //public IBaseQuery<uint, EquipSetData> EquipSetQuery { get; private set; }
+
+        public ItemService ItemService { get; set; }
 
         public GameMannager()
         {
-            Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-            ItemQuery = new CItemQuery();
-            SpellQuery = new CSpellQuery();
-            EnchantQuery = new CEnchantQuery();
-            EquipSetQuery = new CEquipSetQuery();
-
+            Initialize();
+            //Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            //ItemQuery = new BaseQuery<uint, ItemData>(new ItemDbPg());            
+            //SpellQuery = new CSpellQuery();
+            //EnchantQuery = new CEnchantQuery();
+            //EquipSetQuery = new CEquipSetQuery();
 
             /*             
              S_Achievement.ini
@@ -104,26 +105,18 @@ namespace GFDataApi
              S_Title.ini
              S_Transport.ini
              S_VIP.ini*/
-        }
+        }        
 
-        public async Task Init()
+        private void Initialize()
         {
-            await Task.WhenAll(
-                ItemQuery.Init(),
-                SpellQuery.Init(),
-                EnchantQuery.Init(),
-                EquipSetQuery.Init()
-            );
-        }
+            //await ItemQuery.PreInit();
 
-        public async Task SaveAllFiles()
-        {
-            await Task.WhenAll(
-                ItemQuery.Save(),
-                SpellQuery.Save(),
-                EnchantQuery.Save(),
-                EquipSetQuery.Save()
-            );            
+            ServiceCollection services = new ServiceCollection();
+            ProviderRegisters.RegisterPgSql(services);            
+            ProviderRegisters.RegisterServices(services);            
+            var provider = services.BuildServiceProvider();            
+
+            ItemService = provider.GetRequiredService<ItemService>();            
         }
     }
 }

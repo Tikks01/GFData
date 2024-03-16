@@ -18,5 +18,21 @@
         {
             return Buffs.Length;
         }
+
+        public int[] asArray()
+        {
+            var array = new int[4];
+
+            Buffs.CopyTo(array, 0);
+            return array;
+        }
+
+        public TreasureBuffs() { }
+
+        public TreasureBuffs(int[] Buffs) {
+            if (Buffs.Length > 4) return;
+            
+            this.Buffs = Buffs;
+        }
     }
 }
