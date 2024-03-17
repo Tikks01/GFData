@@ -13,5 +13,13 @@ namespace GFDataApi.Services
         public IQueryable<ItemData> GetMany() {
             return context.Get(null).AsQueryable();
         }
+
+        public bool Save(ItemData data)
+        {
+            if (context.Get(data.Id) == null) return false;
+
+            context.Save(data);
+            return true;
+        }
     }
 }

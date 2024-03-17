@@ -1,10 +1,5 @@
 ﻿using GFDataApi.Data;
 using GFDataApi.DataContext.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GFDataApi.DataContext.Implementations.PGSQL
 {
@@ -12,7 +7,13 @@ namespace GFDataApi.DataContext.Implementations.PGSQL
     {
         public bool Delete(ItemData Data)
         {
-            throw new NotImplementedException();
+            if (Data == null) return false;
+
+            using (PgSqlDbContext context = new PgSqlDbContext())
+            {
+                context.Remove(Data);
+                return context.SaveChanges() > 0;
+            }
         }
 
         public ItemData? Get(uint Id)
@@ -38,7 +39,13 @@ namespace GFDataApi.DataContext.Implementations.PGSQL
 
         public ItemData New()
         {
-            throw new NotImplementedException();
+            using (PgSqlDbContext context = new())
+            {
+                var data = new ItemData();
+                context.Item.Add(data);
+
+                return data;                
+            }
         }
 
         public Task PreInitialize()
@@ -46,9 +53,17 @@ namespace GFDataApi.DataContext.Implementations.PGSQL
             throw new NotImplementedException();
         }
 
-        public ItemData Save(ItemData Data)
+        public bool Save(ItemData Data)
         {
-            throw new NotImplementedException();
+            if (Data == null) return false;
+
+            using (PgSqlDbContext context = new())
+            {
+                if (!context.Item.Contains(Data)) return false;
+
+                context.Item.Update(Data);
+                return context.SaveChanges() > 0;                
+            }            
         }
     }
 }

@@ -10,7 +10,7 @@ namespace GFDataApi.DataContext.Implementations.IniFile
 {
     public class ItemIniDataContext : IItemDataContext
     {
-        private List<ItemData> Items = new();
+        private readonly List<ItemData> Items = [];
         private bool isItemMall = false;
         public async Task PreInitialize()
         {
@@ -24,22 +24,24 @@ namespace GFDataApi.DataContext.Implementations.IniFile
         {
             return Items.Where(i => i.Id == Id).FirstOrDefault();
         }
-        public IEnumerable<ItemData> Get(Func<ItemData, bool> whereClausule)
+        public IEnumerable<ItemData> Get(Func<ItemData, bool>? whereClausule)
         {
+            if (whereClausule == null) return Items;
+
             return Items.Where(whereClausule);
         }
         public ItemData New()
         {
-            ItemData item = new ItemData();
+            ItemData item = new();
 
             //item.Id = ID Logic Here
             Items.Add(item);
 
             return item;
         }
-        public ItemData Save(ItemData Data)
+        public bool Save(ItemData Data)
         {
-            return Data;
+            return false;
         }
         private async Task<ItemData> Deserialize(IniLine IniLine)
         {

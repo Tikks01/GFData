@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GFDataApi.DataContext.Interfaces
 {
-    public interface IItemDataContext : IDataContextt<uint, ItemData>
+    public interface IItemDataContext : IDataContext<uint, ItemData>
     {
     }
 }

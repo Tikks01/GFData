@@ -1,28 +1,19 @@
-﻿using GFDataApi.DataContext.Implementations.PGSQL;
-using GFDataApi.DataContext.Interfaces;
-using GFDataApi.Services;
+﻿using GFDataApi.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GFDataApi
 {
     public class GameMannager
-    {
-        //public IBaseQuery<uint, ItemData> ItemQuery { get; private set; }
-        //public IBaseQuery<int, SpellData> SpellQuery { get; private set; }
-        //public IBaseQuery<int, EnchantData> EnchantQuery {  get; private set; }
-        //public IBaseQuery<uint, EquipSetData> EquipSetQuery { get; private set; }
-
-        public ItemService ItemService { get; set; }
+    {        
+        public ItemService ItemService { get; private set; }
 
         public GameMannager()
         {
             Initialize();
-            //Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-            //ItemQuery = new BaseQuery<uint, ItemData>(new ItemDbPg());            
+            //Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);            
             //SpellQuery = new CSpellQuery();
             //EnchantQuery = new CEnchantQuery();
-            //EquipSetQuery = new CEquipSetQuery();
-
+            //EquipSetQuery = new CEquipSetQuery();            
             /*             
              S_Achievement.ini
              S_Activity.ini
@@ -108,9 +99,7 @@ namespace GFDataApi
         }        
 
         private void Initialize()
-        {
-            //await ItemQuery.PreInit();
-
+        {            
             ServiceCollection services = new ServiceCollection();
             ProviderRegisters.RegisterPgSql(services);            
             ProviderRegisters.RegisterServices(services);            

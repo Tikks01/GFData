@@ -21,7 +21,7 @@ namespace GFDataApi.Data
         public string? UsedSoundName { get; set; }
         public string? EnchanceEffectId { get; set; }
         [JsonConverter(typeof(TranslatableStringConverter))]
-        public TranslatableString Name { get; set; }
+        public TranslatableString Name { get; set; } = new();
         public EEquipType EquipType { get; set; }
         public EItemType ItemType { get; set; }
         public uint OpFlags { get; set; }
@@ -103,7 +103,7 @@ namespace GFDataApi.Data
         public EAuctionType AuctionType { get; set; }
         public int[] ExtraData { get; set; } = new int[3];
         [JsonConverter(typeof(TranslatableStringConverter))]
-        public TranslatableString Tip { get; set; }
+        public TranslatableString Tip { get; set; } = new();
 
         [NotMapped]
         public bool ItemMall { get; set; }

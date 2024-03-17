@@ -2,14 +2,14 @@
 
 namespace GFDataApi.DataTypes.BaseClasses
 {
-    public interface IDataContextt<IdType, DataType>
+    public interface IDataContext<IdType, DataType>
         where DataType : IDataType<IdType>
         where IdType : notnull
     {
         Task PreInitialize();
         DataType? Get(IdType Id);
         IEnumerable<DataType> Get(Func<DataType, bool>? whereClausule);
-        DataType Save(DataType Data);
+        bool Save(DataType Data);
         DataType New();
         bool Delete(DataType Data);
     }
