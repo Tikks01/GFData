@@ -1,5 +1,6 @@
 ﻿using GFDataApi.Data;
 using GFDataApi.DataContext.Interfaces;
+using System.Linq;
 
 namespace GFDataApi.DataContext.Implementations.PGSQL
 {
@@ -64,6 +65,25 @@ namespace GFDataApi.DataContext.Implementations.PGSQL
                 context.Item.Update(Data);
                 return context.SaveChanges() > 0;                
             }            
+        }
+
+        public async Task<bool> SaveMany(IEnumerable<ItemData> Data)
+        {
+            using (PgSqlDbContext context = new())
+            {
+                foreach (ItemData item in Data)
+                {
+                    if (context.Item.Contains(item))
+                    {
+                        context.Item.Update(item);
+                    } else
+                    {
+                        context.Item.Add(item);
+                    }
+                }
+
+                return await context.SaveChangesAsync() == Data.Count();
+            }
         }
     }
 }

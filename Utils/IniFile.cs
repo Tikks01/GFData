@@ -22,10 +22,10 @@ namespace GFIniFileEditor.Utils
 
         public bool Load(string filePath)
         {
+            Values.Clear();
             if (!File.Exists(filePath)) return false;
 
-            FilePath = filePath;
-            Values.Clear();
+            FilePath = filePath;            
 
             if (!LoadHeader()) return false;            
 

@@ -4,6 +4,7 @@ using GFDataApi.DataTypes.BaseClasses;
 using GFDataApi.DataTypes.Enums;
 using GFDataApi.Utils;
 using GFIniFileEditor.Utils;
+using System.Configuration;
 using System.Text;
 
 namespace GFDataApi.DataContext.Implementations.IniFile
@@ -43,10 +44,10 @@ namespace GFDataApi.DataContext.Implementations.IniFile
         {
             return false;
         }
-        private async Task<ItemData> Deserialize(IniLine IniLine)
+        private ItemData Deserialize(IniLine IniLine)
         {
-            return await Task.Run(() =>
-            {
+            //return await Task.Run(() =>
+            //{
                 ItemData data = new();
                 data.Id = IniLine.Next<uint>();
                 data.IconFilename = IniLine.Next<string>();
@@ -156,7 +157,7 @@ namespace GFDataApi.DataContext.Implementations.IniFile
                 data.StrengthenType = 0;
 
                 return data;
-            });
+            //});
         }
         private async Task<string> Serialize(ItemData QueryItemObject)
         {
@@ -272,25 +273,25 @@ namespace GFDataApi.DataContext.Implementations.IniFile
 
             isItemMall = false;
             string FileName = "C_Item.ini";
-            file.Load(FileName);
+            file.Load( Path.Combine( ConfigurationManager.AppSettings["DataFolder"], FileName ));
 
             foreach (IniLine line in file.Values)
             {
-                ItemData Item = await Deserialize(line);
+                ItemData Item = Deserialize(line);
                 Items.Add(Item);
             }
 
             isItemMall = true;
             FileName = "C_ItemMall.ini";
-            file.Load(FileName);
+            file.Load(Path.Combine(ConfigurationManager.AppSettings["DataFolder"], FileName));
 
             foreach (IniLine line in file.Values)
             {
-                ItemData Item = await Deserialize(line);
+                ItemData Item = Deserialize(line);
                 Items.Add(Item);
             }
         }
-        public async Task<bool> SaveAll(string path)
+        private async Task<bool> SaveAll(string path)
         {
             var fItem = CreateFile();
             var fItemMall = CreateFile(true);

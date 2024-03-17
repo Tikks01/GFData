@@ -1,10 +1,12 @@
 ﻿using GFDataApi.Data;
+using GFDataApi.DataContext.Implementations.IniFile;
+using GFDataApi.DataContext.Implementations.PGSQL;
 using GFDataApi.DataContext.Interfaces;
 
 namespace GFDataApi.Services
-{
+{  
     public class ItemService(IItemDataContext context)
-    {        
+    {
         public ItemData? Get(uint id)
         {
             return context.Get(id);
@@ -20,6 +22,22 @@ namespace GFDataApi.Services
 
             context.Save(data);
             return true;
+        }
+
+        public void PreInitialize()
+        {
+            context.PreInitialize();
+        }
+
+        public async Task<bool> IniFileToPGSQL()
+        {
+            ItemPGSQLDataContext pgsql = new ItemPGSQLDataContext();
+            ItemIniDataContext ini = new ItemIniDataContext();
+
+            await ini.PreInitialize();
+            var list = ini.Get(null).ToList();
+
+            return await pgsql.SaveMany(list);            
         }
     }
 }
