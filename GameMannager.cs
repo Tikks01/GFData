@@ -1,27 +1,19 @@
-﻿using GFDataApi.BaseClasses;
-using GFDataApi.Querys.Classes;
-using GFDataApi.Querys.Data;
-using GFDataApi.Querys.Records;
-using System.Text;
+﻿using GFDataApi.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GFDataApi
 {
     public class GameMannager
-    {
-        public IBaseQuery<uint, ItemData> ItemQuery { get; private set; }
-        public IBaseQuery<int, SpellData> SpellQuery { get; private set; }
-        public IBaseQuery<int, EnchantData> EnchantQuery {  get; private set; }
-        public IBaseQuery<uint, EquipSetData> EquipSetQuery { get; private set; }
+    {        
+        public ItemService ItemService { get; private set; }
 
         public GameMannager()
         {
-            Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-            ItemQuery = new CItemQuery();
-            SpellQuery = new CSpellQuery();
-            EnchantQuery = new CEnchantQuery();
-            EquipSetQuery = new CEquipSetQuery();
-
-
+            Initialize();
+            //Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);            
+            //SpellQuery = new CSpellQuery();
+            //EnchantQuery = new CEnchantQuery();
+            //EquipSetQuery = new CEquipSetQuery();            
             /*             
              S_Achievement.ini
              S_Activity.ini
@@ -104,26 +96,16 @@ namespace GFDataApi
              S_Title.ini
              S_Transport.ini
              S_VIP.ini*/
-        }
+        }        
 
-        public async Task Init()
-        {
-            await Task.WhenAll(
-                ItemQuery.Init(),
-                SpellQuery.Init(),
-                EnchantQuery.Init(),
-                EquipSetQuery.Init()
-            );
-        }
+        private void Initialize()
+        {            
+            ServiceCollection services = new ServiceCollection();
+            ProviderRegisters.RegisterPgSql(services);            
+            ProviderRegisters.RegisterServices(services);            
+            var provider = services.BuildServiceProvider();            
 
-        public async Task SaveAllFiles()
-        {
-            await Task.WhenAll(
-                ItemQuery.Save(),
-                SpellQuery.Save(),
-                EnchantQuery.Save(),
-                EquipSetQuery.Save()
-            );            
+            ItemService = provider.GetRequiredService<ItemService>();            
         }
     }
 }

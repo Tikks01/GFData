@@ -1,5 +1,5 @@
 ﻿using GFDataApi.DataTypes;
-using GFDataApi.Enums;
+using GFDataApi.DataTypes.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
