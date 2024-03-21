@@ -12,7 +12,7 @@ namespace GFDataApi.Services
             return context.Get(id);
         }
 
-        public IQueryable<ItemData> GetMany() {
+        public IQueryable<ItemData> GetAll() {
             return context.Get(null).AsQueryable();
         }
 
@@ -20,8 +20,7 @@ namespace GFDataApi.Services
         {
             if (context.Get(data.Id) == null) return false;
 
-            context.Save(data);
-            return true;
+            return context.Save(data);            
         }
 
         public void PreInitialize()
